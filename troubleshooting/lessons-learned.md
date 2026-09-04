@@ -18,6 +18,9 @@ Gerade bei mehreren Docker Containern erleichtert eine klare Struktur:
 
 Mit zunehmender Anzahl an Diensten wurde deutlich, wie wichtig eine gute Organisation der Docker Compose Dateien und Konfigurationen ist.
 
+Nachträglich wurden Compose-Dateien und Laufzeitdaten in getrennte Verzeichnisse überführt, um die Konfiguration versionieren zu können, ohne
+Secrets oder Datenbanken mit einzuschließen. Diese Trennung von Anfang an vorzusehen wäre einfacher gewesen als die spätere Umstellung.
+
 ---
 
 # Sicherheit öffentlich erreichbarer Dienste
@@ -51,9 +54,34 @@ für öffentlich erreichbare Dienste sind.
 - 165 geblockte IP-Adressen innerhalb der letzten 90 Tage
 
 ### CrowdSec
-- 156 geblockte IP-Adressen innerhalb der letzten 4 Tage
+- 156 erkannte IP-Adressen innerhalb der letzten 4 Tage
+
+Die Sperren wurden zunächst nur erkannt, aber nicht durchgesetzt (siehe folgendes Beispiel).
 
 Diese Erfahrungen haben gezeigt, wie wichtig zusätzliche Sicherheitsmaßnahmen auch bei kleineren privaten Servern sind.
+
+---
+
+# Konkretes Beispiel: CrowdSec ohne Durchsetzung
+
+**Problem:** CrowdSec meldete regelmäßig erkannte Angriffe über Discord und zeigte aktive Sperren in der WebUI an. Der Schutz wirkte funktionsfähig.
+Tatsächlich wurden gesperrte IP-Adressen aber nie blockiert.
+
+**Analyse:**
+- `cscli bouncers list` zeigte eine leere Liste
+- `docker logs bouncer-traefik` enthielt keine eingehenden Requests
+- Ein manuell gesetzter Ban auf die eigene IP hatte keine Wirkung
+- Im Traefik-Access-Log standen ausschließlich Cloudflare-IP-Adressen
+
+**Ursachen:** Drei unabhängige Fehler, die sich gegenseitig verdeckten.
+Der API-Key des Bouncers war nie über `cscli bouncers add` registriert worden. Die Middleware war zwar definiert, aber an keinen Router gebunden.
+Traefik übergab nicht die echten Client-Adressen, weil die Cloudflare-Ranges nicht als vertrauenswürdige Proxys hinterlegt waren.
+
+**Lösung:** Bouncer registriert, Middleware am HTTPS-Entrypoint eingebunden, `forwardedHeaders.trustedIPs` gesetzt.
+Anschließend mit einem Testban gegen die eigene IP verifiziert (HTTP 403).
+
+**Erkenntnis:** Erkennung und Durchsetzung sind bei CrowdSec getrennte Komponenten. Benachrichtigungen und Einträge in der WebUI belegen nur die Erkennung.
+Sicherheitsmaßnahmen sollten aktiv getestet werden, statt aus dem Ausbleiben von Fehlern auf Funktionsfähigkeit zu schließen.
 
 ---
 
@@ -85,7 +113,9 @@ Dadurch konnte ein besseres Verständnis für:
 
 entwickelt werden.
 
-## Konkretes Beispiel: Neustart-Schleife nach automatischem Update
+---
+
+# Konkretes Beispiel: Neustart-Schleife nach automatischem Update
 
 **Problem:** Der Container von [Krawl](https://github.com/BlessedRebuS/Krawl) ging nach einem automatischen Image-Update in eine Neustart-Schleife.
 
