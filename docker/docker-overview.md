@@ -2,18 +2,47 @@
 
 Zur Verwaltung der einzelnen Dienste wird Docker in Kombination mit Docker Compose verwendet.
 
-Die einzelnen Dienste besitzen jeweils eigene Docker Compose Verzeichnisse.
+Konfiguration und Laufzeitdaten sind bewusst voneinander getrennt.
 
 ```text
 /docker
- ├── jellyfin/
+ ├── jellyfin/          docker-compose.yml, .env
  ├── vaultwarden/
  ├── kavita/
  ├── traefik/
  └── ...
+
+/docker-data
+ ├── traefik/           traefik.yml, config.yml, acme.json
+ ├── crowdsec/          Konfiguration, Datenbank, Parser
+ ├── kavita/
+ └── ...
 ```
 
+Unter `docker/` liegen ausschließlich die Compose-Dateien der einzelnen Dienste.
+Alle persistenten Daten und dienstspezifische Konfigurationsdateien liegen
+getrennt davon unter `docker-data/`.
+
 Dadurch lassen sich die einzelnen Anwendungen voneinander getrennt verwalten und einfacher aktualisieren oder erweitern.
+
+---
+
+# Trennung von Konfiguration und Daten
+
+Ursprünglich lagen Compose-Dateien und Laufzeitdaten eines Dienstes gemeinsam in einem Verzeichnis.
+Die Struktur wurde nachträglich getrennt.
+
+Der Grund dafür ist die Versionierbarkeit: `docker/` enthält nur Compose-Dateien und lässt sich damit vollständig in einem
+privaten Git-Repository verwalten, jeweils zusammen mit einer `.env.example`, die die benötigten Variablen ohne deren Werte dokumentiert.
+Die eigentlichen `.env`-Dateien mit Secrets sowie alle Laufzeitdaten unter `docker-data/` bleiben davon ausgenommen.
+
+In der alten Struktur hätten Datenbanken, Zertifikate und Secrets im selben Verzeichnis gelegen wie die zu versionierenden Dateien.
+
+Perspektivisch soll darüber ein Deployment über GitHub möglich sein, bei dem Konfigurationsänderungen per `git pull` auf den Server gelangen,
+ohne Laufzeitdaten zu berühren.
+
+**Offener Punkt:** Die Compose-Dateien enthalten derzeit absolute Pfade zu `docker-data/`. Für ein tatsächlich portables Deployment
+müssten diese über eine Variable in der `.env` aufgelöst werden.
 
 ---
 
