@@ -39,6 +39,13 @@ Freigegeben werden nur die tatsächlich benötigten Dienste.
 
 Zusätzlich werden einige Dienste bewusst nur lokal oder innerhalb bestimmter Netzwerke erreichbar gemacht.
 
+Die Ports 80 und 443 sind nicht allgemein freigegeben, sondern ausschließlich für die IP-Ranges von Cloudflare.
+Direkte Zugriffe auf die Server-IP am Reverse Proxy vorbei sind damit nicht möglich.
+Da Docker veröffentlichte Ports an UFW vorbei in iptables einträgt, werden dafür `ufw route`-Regeln in Verbindung mit ufw-docker verwendet.
+
+Entsprechend wurden auch die IPv6-Portfreigaben im Router für 80 und 443 entfernt, da diese sonst eine Umgehungsmöglichkeit dargestellt hätten.
+Der SFTP-Port bleibt bewusst offen, da dieser Dienst nicht über Cloudflare läuft.
+
 <a href="../screenshots/ufw_status.png">
   <img src="../screenshots/ufw_status.png" alt="UFW Status" width="50%">
 </a>
@@ -76,9 +83,23 @@ bantime   = 1h
 
 # CrowdSec
 
-CrowdSec wird zur zusätzlichen Überwachung wichtiger Zugriffe verwendet.
+CrowdSec analysiert die Zugriffslogs von Traefik und erkennt auffällige Muster wie Path-Scanning, CVE-Probing oder Crawling.
+Erkannte IP-Adressen werden für eine definierte Dauer gesperrt.
 
-Dadurch können auffällige Zugriffe und potenzielle Angriffe schneller erkannt werden.
+Bei einer Überprüfung der Konfiguration fiel auf, dass CrowdSec zwar Sperren erzeugt und darüber benachrichtigt, diese aber nicht durchgesetzt wurden:
+Der Bouncer war nicht bei der lokalen API registriert und die Middleware nicht in Traefik eingebunden.
+Gesperrte IP-Adressen konnten die Dienste weiterhin erreichen. Zusätzlich sah CrowdSec durch den vorgeschalteten Cloudflare-Proxy
+nicht die tatsächlichen Client-Adressen.
+
+Die folgenden Anpassungen wurden daraufhin vorgenommen:
+
+Die Sperren werden über den Traefik-Bouncer durchgesetzt, der als ForwardAuth-Middleware am HTTPS-Entrypoint hängt und damit für alle öffentlichen Dienste greift.
+Ohne Bouncer würde CrowdSec Sperren zwar erkennen und speichern, aber nicht anwenden.
+
+Damit CrowdSec die tatsächlichen Client-IPs sieht und nicht die Cloudflare-Edge-Server, sind in Traefik die Cloudflare-Ranges als vertrauenswürdige Proxys hinterlegt (`forwardedHeaders.trustedIPs`).
+Ohne diese Einstellung würden Cloudflare-IPs gesperrt und damit legitime Besucher ausgeschlossen.
+
+Eigene Adressen sind über einen lokalen Whitelist-Parser ausgenommen, um versehentliche Selbstsperren zu vermeiden.
 
 Zur einfacheren Verwaltung und Übersicht wird zusätzlich die CrowdSec WebUI verwendet.
 <a href="../screenshots/crowdsec_webui.png">
@@ -86,6 +107,13 @@ Zur einfacheren Verwaltung und Übersicht wird zusätzlich die CrowdSec WebUI ve
 </a>
 
 Auch CrowdSec sendet Benachrichtigungen über Discord Webhooks.
+
+---
+
+# Wartung
+
+Die IP-Ranges von Cloudflare ändern sich gelegentlich. Ein Skript prüft täglich per Cron die offizielle API und meldet Abweichungen über einen Discord-Webhook,
+damit Firewall- und Traefik-Konfiguration angepasst werden können.
 
 ---
 
