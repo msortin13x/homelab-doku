@@ -41,7 +41,7 @@ Container-Updates werden anschließend bewusst manuell durchgeführt.
 
 # Discord Benachrichtigungen
 
-Mehrere Dienste senden Benachrichtigungen über Discord Webhooks.
+Mehrere Dienste senden Benachrichtigungen über Discord-Webhooks.
 
 Dazu gehören unter anderem:
 - Uptime Kuma
@@ -52,12 +52,16 @@ Dazu gehören unter anderem:
 Dadurch können Probleme oder sicherheitsrelevante Ereignisse schneller erkannt werden, ohne die jeweiligen Weboberflächen dauerhaft überwachen zu müssen.
 
 ## Beispiel: Uptime Kuma Benachrichtigung
+
+Die Benachrichtigung enthält:
+
 - den Namen des betroffenen Dienstes
-- den aktuellen Status (z.B "Down")
+- den aktuellen Status (z.B. "Down")
 - den Zeitpunkt des Ereignisses
-- die Fehlermeldung (z.B. ``getaddrinfo ENOTFOUND`)
+- die Fehlermeldung (z.B. `getaddrinfo ENOTFOUND`)
 
 Dadurch ist auf einen Blick ersichtlich, welcher Dienst betroffen ist und wann das Problem aufgetreten ist, ohne das Uptime-Kuma-Dashboard selbst öffnen zu müssen.
+
 ---
 
 # Ziel des Monitorings
@@ -70,6 +74,8 @@ Beim Aufbau des Monitorings war besonders wichtig:
 
 ---
 
-# Weitere Informationen
+# Weiterführend
 
-Weitere Informationen zu Sicherheitsmaßnahmen befinden sich in der Datei [security.md](/network/security.md).
+- [Weiter: Backup & Wartung](backup-maintenance.md) - Sicherungen und regelmäßige Aufgaben
+- [Zurück: Docker & Container](docker-overview.md) - Aufbau und Verwaltung der Container
+- [Zurück zur Übersicht](../README.md)

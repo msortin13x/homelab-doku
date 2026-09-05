@@ -132,7 +132,7 @@ entwickelt werden.
 
 # Monitoring und Benachrichtigungen
 
-Durch die Nutzung von Discord Webhooks wurde gelernt, wie hilfreich zentrale Benachrichtigungen für den Betrieb mehrerer Dienste sein können.
+Durch die Nutzung von Discord-Webhooks wurde gelernt, wie hilfreich zentrale Benachrichtigungen für den Betrieb mehrerer Dienste sein können.
 
 Probleme oder Ausfälle können dadurch schneller erkannt werden, ohne alle Dienste manuell kontrollieren zu müssen.
 
@@ -152,3 +152,12 @@ Durch das HomeLab konnten praktische Erfahrungen gesammelt werden in:
 - Fehlersuche und Problemlösung
 
 Viele dieser Themen konnten erst durch praktische Nutzung und den Umgang mit realen Problemen besser verstanden werden.
+
+---
+
+# Weiterführend
+
+- [Sicherheitsmaßnahmen](../network/security.md) - Aktueller Stand der Absicherung
+- [Docker & Container](../docker/docker-overview.md) - Struktur und Verwaltung
+- [Zurück: Backup & Wartung](../docker/backup-maintenance.md) - Sicherungen und regelmäßige Aufgaben
+- [Zurück zur Übersicht](../README.md)

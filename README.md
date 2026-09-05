@@ -20,11 +20,11 @@ Privates HomeLab zur praktischen Vertiefung meiner Kenntnisse im Bereich:
 
 # Inhaltsverzeichnis
 
-- [Netzwerk & Sicherheit](/network/network-overview.md)
-- [Docker & Container](/docker/docker-overview.md)
-- [Monitoring](/docker/monitoring.md)
-- [Backup & Wartung](/docker/backup-maintenance.md)
-- [Erfahrungen & Probleme](/troubleshooting/lessons-learned.md)
+- [Netzwerk & Sicherheit](network/network-overview.md)
+- [Docker & Container](docker/docker-overview.md)
+- [Monitoring](docker/monitoring.md)
+- [Backup & Wartung](docker/backup-maintenance.md)
+- [Erfahrungen & Probleme](troubleshooting/lessons-learned.md)
 
 ---
 
@@ -56,28 +56,27 @@ Privates HomeLab zur praktischen Vertiefung meiner Kenntnisse im Bereich:
 
 # Architektur
 
-## Öffentlich erreichbare Dienste:
+## Öffentlich erreichbare Dienste
 
 ```mermaid
-flowchart TD
-      A[Internet] --> B[Cloudflare]
-      B --> C[Traefik Reverse Proxy]
-      C --> D[Docker Container]
+flowchart LR
+    A[Internet] --> B[Cloudflare]
+    B --> C[Traefik Reverse Proxy]
+    C --> E[CrowdSec Bouncer]
+    E -->|erlaubt| D[Docker Container]
+    E -->|gesperrt| F[403 Forbidden]
 ```
+
 ## Interne Dienste
+
 ```mermaid
-flowchart TD
-      C[HomeLab Server] --> G[Interne Verwaltungsdienste]
-      
-      Lokal ~~~ Extern
+flowchart LR
+    H[Client im Heimnetz] -->|Lokales Netzwerk| G
+    I[Client unterwegs] -->|Tailscale VPN| G
 
-      subgraph Lokal["Lokales Netzwerk"]
-            H[Client im Heimnetz] --> G
-      end
-
-      subgraph Extern["Außerhalb des lokalen Netzwerkes"]
-            I[Client unterwegs] --> |Tailscale VPN| G
-      end
+    subgraph Server["HomeLab Server"]
+        G[Interne Verwaltungsdienste]
+    end
 ```
 
 ---

@@ -9,23 +9,19 @@ Neben dem lokalen Zugriff können einzelne Dienste auch extern erreicht werden. 
 ```mermaid
 flowchart TD
     A[Internet] --> B[Cloudflare]
-    B --> C1["FRITZ!Box"]
+    B -->|nur Cloudflare-Ranges| C1["FRITZ!Box"]
     C1 --> C[HomeLab Server]
     C --> D[Traefik Reverse Proxy]
-    D --> E[Öffentliche Dienste]
-    C --> G[Interne Verwaltungsdienste]
+    D --> BO[CrowdSec Bouncer]
+    BO -->|erlaubt| E[Öffentliche Dienste]
+    BO -->|gesperrt| X[403 Forbidden]
 
-    E ~~~ Lokal
-    E ~~~ Extern
-
-    subgraph Lokal["Lokales Netzwerk (192.168.x.x)"]
-        H[Client im Heimnetz] --> G
-    end
-
-    subgraph Extern["Außerhalb des lokalen Netzwerkes"]
-        I[Client unterwegs] -->|Tailscale VPN| G
-    end
+    H[Client im Heimnetz] -->|Lokales Netzwerk| G
+    I[Client unterwegs] -->|Tailscale VPN| G
+    G[Interne Verwaltungsdienste]
+    C --> G
 ```
+
 ---
 
 # Öffentliche Dienste
@@ -45,6 +41,7 @@ Der externe Zugriff erfolgt über einen Reverse Proxy mit HTTPS-Verschlüsselung
 |---|---|
 | Cloudflare | DNS Verwaltung und HTTPS |
 | Traefik | Reverse Proxy |
+| CrowdSec | Erkennung und Sperrung auffälliger Zugriffe |
 | Docker | Bereitstellung der Dienste|
 
 ---
@@ -71,12 +68,13 @@ Beim Aufbau des Netzwerks war mir besonders wichtig:
 - Trennung zwischen öffentlichen und internen Diensten
 - Sichere externe Erreichbarkeit
 - HTTPS für öffentliche Dienste
-- Möglichst wenig öffentlich freigegebene Ports
+- Öffentliche Ports nur über Cloudflare erreichbar
 - Einfache Wartbarkeit der Container
 - Zugriff auf Verwaltungsdienste über das lokale Netzwerk oder über VPN
 
 ---
 
-# Weitere Informationen
+# Weiterführend
 
-Weitere Informationen zu Sicherheitsmaßnahmen befinden sich in der Datei [security.md](security.md).
+- [Weiter: Sicherheitsmaßnahmen](security.md) - Firewall, CrowdSec, Fail2Ban und Zugriffsschutz
+- [Zurück zur Übersicht](../README.md)

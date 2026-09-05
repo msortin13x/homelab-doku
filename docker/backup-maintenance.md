@@ -17,6 +17,10 @@ Damit wird das 3-2-1-Backup-Prinzip umgesetzt: mindestens drei Kopien der Daten,
 
 Dadurch bleiben wichtige Daten auch bei Problemen mit dem Server oder dem RAID-System weiterhin verfügbar.
 
+Zusätzlich werden die Docker-Compose-Dateien in einem privaten Git-Repository versioniert.
+Dadurch ist neben der reinen Sicherung auch nachvollziehbar, wann und warum eine Konfiguration geändert wurde.
+Laufzeitdaten und `.env`-Dateien mit Secrets sind davon ausgenommen und über die oben genannten Backups abgedeckt.
+
 ---
 
 # RAID 5
@@ -52,3 +56,11 @@ Beim Betrieb des HomeLab war besonders wichtig:
 - möglichst einfache Wiederherstellung wichtiger Daten
 - stabile Laufzeit der Dienste
 - übersichtliche Verwaltung der Container
+
+---
+
+# Weiterführend
+
+- [Weiter: Erfahrungen & Probleme](../troubleshooting/lessons-learned.md) - Aufgetretene Probleme und Lösungen
+- [Zurück: Monitoring](monitoring.md) - Überwachung der Dienste und Benachrichtigungen
+- [Zurück zur Übersicht](../README.md)

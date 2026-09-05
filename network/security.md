@@ -30,6 +30,24 @@ Dadurch müssen für interne Dienste keine zusätzlichen Ports öffentlich freig
 
 ---
 
+# SSH-Zugang
+
+Der SSH-Zugang ist ausschließlich über Public-Key-Authentifizierung möglich.
+Die Anmeldung mit Benutzername und Passwort wurde deaktiviert, ebenso der direkte Root-Login.
+
+Dadurch laufen Brute-Force-Versuche auf Passwörter grundsätzlich ins Leere.
+Zusätzlich ist der Zugriff auf das lokale Netzwerk und das Tailscale-Netz beschränkt.
+
+Relevante Einstellungen in `/etc/ssh/sshd_config`:
+
+```text
+PasswordAuthentication no
+PubkeyAuthentication yes
+PermitRootLogin no
+```
+
+---
+
 # UFW Firewall
 
 Zur Absicherung des Servers wird UFW verwendet.
@@ -62,7 +80,7 @@ Besonders geschützt werden:
 
 Da SSH ausschließlich privat genutzt wird, wurden dafür strengere Regeln verwendet als für den gemeinsam genutzten SFTP-Dienst.
 
-Zusätzlich sendet Fail2Ban Benachrichtigungen über Discord Webhooks.
+Zusätzlich sendet Fail2Ban Benachrichtigungen über Discord-Webhooks.
 
 ## Beispiel: Jail-Konfiguration
 
@@ -106,7 +124,7 @@ Zur einfacheren Verwaltung und Übersicht wird zusätzlich die CrowdSec WebUI ve
   <img src="../screenshots/crowdsec_webui.png" alt="CrowdSec WebUI" width="50%">
 </a>
 
-Auch CrowdSec sendet Benachrichtigungen über Discord Webhooks.
+Auch CrowdSec sendet Benachrichtigungen über Discord-Webhooks.
 
 ---
 
@@ -117,6 +135,8 @@ damit Firewall- und Traefik-Konfiguration angepasst werden können.
 
 ---
 
-# Weitere Informationen
+# Weiterführend
 
-Weitere Informationen zum allgemeinen Netzwerkaufbau befinden sich in der Datei [network-overview.md](network-overview.md).
+- [Weiter: Docker & Container](../docker/docker-overview.md) - Aufbau und Verwaltung der Container
+- [Zurück: Netzwerkübersicht](network-overview.md) - Aufbau und Erreichbarkeit der Dienste
+- [Zurück zur Übersicht](../README.md)

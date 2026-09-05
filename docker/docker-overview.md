@@ -79,7 +79,7 @@ Dadurch ergeben sich unter anderem folgende Vorteile:
 - Kavita
 - SFTPGo
 
-Die Erreichbarkeit wird innerhalb der [Netzwerkübersicht](/network/network-overview.md#öffentliche-dienste) erläutert.
+Die Erreichbarkeit wird innerhalb der [Netzwerkübersicht](../network/network-overview.md#öffentliche-dienste) erläutert.
 
 ## Interne Dienste
 - Dockhand
@@ -131,7 +131,9 @@ Aus diesem Grund wurde sich bewusst gegen automatische Container-Updates entschi
 
 ---
 
-# Weitere Informationen
-Weitere Informationen zu Monitoring und Benachrichtigungen befinden sich in der Datei [monitoring.md](/docker/monitoring.md).
+# Weiterführend
 
-Weitere Informationen zu Backups und Wartung befinden sich in der Datei [backup-maintenance.md](/docker/backup-maintenance.md).
+- [Weiter: Monitoring](monitoring.md) - Überwachung der Dienste und Benachrichtigungen
+- [Backup & Wartung](backup-maintenance.md) - Sicherungen und regelmäßige Aufgaben
+- [Zurück: Sicherheitsmaßnahmen](../network/security.md) - Firewall, CrowdSec, Fail2Ban und Zugriffsschutz
+- [Zurück zur Übersicht](../README.md)
